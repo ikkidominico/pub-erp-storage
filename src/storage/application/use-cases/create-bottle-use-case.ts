@@ -29,9 +29,7 @@ export class CreateBottleUseCase {
             minimumAmount,
             capacity,
         });
-
-        this.bottleRepository.create(bottle);
-
+        await this.bottleRepository.create(bottle);
         return {
             bottle,
         };

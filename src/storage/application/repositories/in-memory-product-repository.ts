@@ -2,7 +2,11 @@ import { ProductRepository } from "@/src/storage/application/repositories/interf
 import { Product } from "@/src/storage/enterprise/entities/product";
 
 export class InMemoryProductRepository implements ProductRepository {
-    public products: Product[] = [];
+    public products: Product[];
+
+    constructor() {
+        this.products = [];
+    }
 
     async create(product: Product): Promise<object> {
         this.products.push(product);
@@ -11,27 +15,27 @@ export class InMemoryProductRepository implements ProductRepository {
         };
     }
 
-    async find(id: string): Promise<Product | null> {
-        const productIndex = this.products.findIndex(
+    async find(id: string): Promise<Product | undefined> {
+        const product = this.products.find(
             (product) => product.id.toString() === id,
         );
-        return this.products[productIndex];
+        if (!product) throw new Error("Product not found");
+        return product;
     }
 
     async save(product: Product): Promise<object> {
-        const productIndex = this.products.findIndex(
-            (item) => item.id === product.id,
-        );
-        this.products[productIndex] = product;
-        return this.products[productIndex];
+        const index = this.products.findIndex((item) => item.id === product.id);
+        this.products[index] = product;
+        return this.products[index];
     }
 
     async delete(id: string): Promise<object> {
-        const productIndex = this.products.findIndex(
-            (item) => item.id.toString() === id,
+        const products = this.products.filter(
+            (product) => product.id.toString() !== id,
         );
-        const deleted = this.products[productIndex];
-        this.products.splice(productIndex, 1);
-        return deleted;
+        this.products = products;
+        return {
+            deleted: true,
+        };
     }
 }

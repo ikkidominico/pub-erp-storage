@@ -21,7 +21,11 @@ export abstract class Entity<Properties> {
         this._updatedAt = new Date();
     }
 
-    protected deleted() {
+    public delete() {
         this._deletedAt = new Date();
+    }
+
+    get deleted() {
+        return this._deletedAt;
     }
 }

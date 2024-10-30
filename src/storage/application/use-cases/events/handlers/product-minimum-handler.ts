@@ -1,9 +1,10 @@
+import { ProductMinimumEvent } from "../product-minimum-event";
 import { Handler } from "./handler";
 
-export default class ProductMinimumHandler
-    implements Handler<ProductMinimumHandler>
-{
-    handle(): void {
-        console.log("Product minimum handler notified!");
+export class ProductMinimumHandler implements Handler<ProductMinimumEvent> {
+    handle({ productName, productAmount }: ProductMinimumEvent): void {
+        console.log(
+            `'${productName}' current amount '${productAmount}' is lower than the minimum`,
+        );
     }
 }

@@ -4,7 +4,7 @@ import { ProductRepository } from "../repositories/interfaces/product-repository
 export interface CreateProductUseCaseRequest {
     sku: string;
     name: string;
-    description: string;
+    description?: string;
     amount: number;
     minimumAmount: number;
 }
@@ -30,9 +30,7 @@ export class CreateProductUseCase {
             amount,
             minimumAmount,
         });
-
-        this.productRepository.create(product);
-
+        await this.productRepository.create(product);
         return {
             product,
         };

@@ -1,33 +1,23 @@
 import { BottleRepository } from "../repositories/interfaces/bottle-repository";
 
-interface AddBottleUseCaseRequest {
+export interface DeleteBottleUseCaseRequest {
     bottleId: string;
-    value: number;
-    unit?: "bottle" | "ml";
 }
 
-export class AddBottleUseCase {
+export class DeleteBottleUseCase {
     private bottleRepository: BottleRepository;
 
     constructor(bottleRepository: BottleRepository) {
         this.bottleRepository = bottleRepository;
     }
 
-    async handle({
-        bottleId,
-        value,
-        unit = "bottle",
-    }: AddBottleUseCaseRequest) {
+    async handle({ bottleId }: DeleteBottleUseCaseRequest) {
         const bottle = await this.bottleRepository.find(bottleId);
         if (!bottle) throw new Error("Bottle not found");
-        if (unit === "ml") {
-            bottle.add(value);
-        } else {
-            bottle.addBottles(value);
-        }
-        this.bottleRepository.save(bottle);
+        bottle.delete();
+        await this.bottleRepository.save(bottle);
         return {
-            bottle,
+            deleted: bottle.deleted,
         };
     }
 }

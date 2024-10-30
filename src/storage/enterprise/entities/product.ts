@@ -3,7 +3,7 @@ import { Entity } from "@/src/storage/core/entity";
 export interface ProductProperties {
     sku: string;
     name: string;
-    description: string;
+    description?: string;
     amount: number;
     minimumAmount: number;
 }
@@ -36,11 +36,11 @@ export class Product<Type = unknown> extends Entity<ProductProperties & Type> {
         this.touch();
     }
 
-    get description() {
+    get description(): string | undefined {
         return this._properties.description;
     }
 
-    set description(value: string) {
+    set description(value: string | undefined) {
         this._properties.description = value;
         this.touch();
     }

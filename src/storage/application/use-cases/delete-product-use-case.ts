@@ -1,24 +1,23 @@
 import { ProductRepository } from "../repositories/interfaces/product-repository";
 
-interface AddProductUseCaseRequest {
+export interface DeleteProductUseCaseRequest {
     productId: string;
-    value: number;
 }
 
-export class AddProductUseCase {
+export class DeleteProductUseCase {
     private productRepository: ProductRepository;
 
     constructor(productRepository: ProductRepository) {
         this.productRepository = productRepository;
     }
 
-    async handle({ productId, value }: AddProductUseCaseRequest) {
+    async handle({ productId }: DeleteProductUseCaseRequest) {
         const product = await this.productRepository.find(productId);
         if (!product) throw new Error("Product not found");
-        product.add(value);
-        this.productRepository.save(product);
+        product.delete();
+        await this.productRepository.save(product);
         return {
-            product,
+            deleted: product.deleted,
         };
     }
 }

@@ -2,7 +2,11 @@ import { BottleRepository } from "@/src/storage/application/repositories/interfa
 import { Bottle } from "@/src/storage/enterprise/entities/bottle";
 
 export class InMemoryBottleRepository implements BottleRepository {
-    public bottles: Bottle[] = [];
+    public bottles: Bottle[];
+
+    constructor() {
+        this.bottles = [];
+    }
 
     async create(bottle: Bottle): Promise<object> {
         this.bottles.push(bottle);
@@ -11,27 +15,27 @@ export class InMemoryBottleRepository implements BottleRepository {
         };
     }
 
-    async find(id: string): Promise<Bottle | null> {
-        const bottleIndex = this.bottles.findIndex(
+    async find(id: string): Promise<Bottle | undefined> {
+        const bottle = this.bottles.find(
             (bottle) => bottle.id.toString() === id,
         );
-        return this.bottles[bottleIndex];
+        if (!bottle) throw new Error("Bottle not found");
+        return bottle;
     }
 
     async save(bottle: Bottle): Promise<object> {
-        const bottleIndex = this.bottles.findIndex(
-            (item) => item.id === bottle.id,
-        );
-        this.bottles[bottleIndex] = bottle;
-        return this.bottles[bottleIndex];
+        const index = this.bottles.findIndex((item) => item.id === bottle.id);
+        this.bottles[index] = bottle;
+        return this.bottles[index];
     }
 
     async delete(id: string): Promise<object> {
-        const bottleIndex = this.bottles.findIndex(
-            (item) => item.id.toString() === id,
+        const bottles = this.bottles.filter(
+            (bottle) => bottle.id.toString() !== id,
         );
-        const deleted = this.bottles[bottleIndex];
-        this.bottles.splice(bottleIndex, 1);
-        return deleted;
+        this.bottles = bottles;
+        return {
+            deleted: true,
+        };
     }
 }

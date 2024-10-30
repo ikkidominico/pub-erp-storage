@@ -26,4 +26,25 @@ describe("Add Bottle Use Case", () => {
         });
         expect(added.amount).toEqual(4750);
     });
+    it("should be able to increase a bottle amount in ml", async () => {
+        const bottle = Bottle.create(
+            {
+                sku: "123456abc",
+                name: "Product Name",
+                description: "Product Description",
+                amount: 1000,
+                minimumAmount: 750,
+                capacity: 750,
+            },
+            "product-4",
+        );
+        bottleRepository.create(bottle);
+        const { bottle: added } = await sut.handle({
+            bottleId: "product-4",
+            value: 1500,
+            unit: "ml",
+        });
+        expect(added.amount).toEqual(2500);
+        expect(added.bottles).toBeGreaterThan(3);
+    });
 });

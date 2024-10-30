@@ -1,10 +1,13 @@
-import { BottleRepository } from '../repositories/interfaces/bottle-repository';
+import { BottleRepository } from "../repositories/interfaces/bottle-repository";
 
 interface EditBottleUseCaseRequest {
     bottleId: string;
-    amount: number;
-    minimumAmount: number;
-    capacity: number;
+    sku?: string;
+    name?: string;
+    description?: string;
+    amount?: number;
+    minimumAmount?: number;
+    capacity?: number;
 }
 
 export class EditBottleUseCase {
@@ -16,22 +19,24 @@ export class EditBottleUseCase {
 
     async handle({
         bottleId,
+        sku,
+        name,
+        description,
         amount,
         minimumAmount,
-        capacity
+        capacity,
     }: EditBottleUseCaseRequest) {
         const bottle = await this.bottleRepository.find(bottleId);
-
-        if (!bottle) throw new Error('Bottle not found.');
-
-        bottle.amount = amount;
-        bottle.minimumAmount = minimumAmount;
-        bottle.capacity = capacity;
-
-        this.bottleRepository.save(bottle);
-
+        if (!bottle) throw new Error("Bottle not found");
+        bottle.sku = sku ?? bottle.sku;
+        bottle.name = name ?? bottle.name;
+        bottle.description = description ?? bottle.description;
+        bottle.amount = amount ?? bottle.amount;
+        bottle.minimumAmount = minimumAmount ?? bottle.minimumAmount;
+        bottle.capacity = capacity ?? bottle.capacity;
+        await this.bottleRepository.save(bottle);
         return {
-            bottle
+            bottle,
         };
     }
 }
